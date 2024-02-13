@@ -1,0 +1,82 @@
+    
+    
+ 0-0 TRANSITION
+
+          INDEX        EN2(eV)         EN1(eV)          DE(eV)      En-0-0(cm-1)   FC      SPECTRUM
+        1.0000       2.51821418       0.00000000       2.51821418       0.000  0.000000   0.000000E+00
+ *************************************************
+   
+   
+   
+   
+ STATE1 MOTHER STATE N.             1
+
+
+                    FRANCK-CONDON INTEGRALS FOR EXCITED VIB STATES OF STATE2
+    
+    
+ OVERTONES (C1 CLASS)
+
+          INDEX        EN2(eV)         EN1(eV)          DE(eV)      En-0-0(cm-1)   FC      SPECTRUM
+        2.0000       3.43602150       0.00000000       3.43602150    7402.616  0.000000   0.802722E-07
+ state 1 = GROUND
+ state 2 =
+  Osc2=  1  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0
+  Nqu2= 24  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0
+   
+   
+   
+        3.0000       3.47426347       0.00000000       3.47426347    7711.058  0.000000   0.272722E-06
+ state 1 = GROUND
+ state 2 =
+  Osc2=  1  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0
+  Nqu2= 25  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0
+   
+   
+   
+        4.0000       3.51250544       0.00000000       3.51250544    8019.501  0.000000   0.885735E-06
+ state 1 = GROUND
+ state 2 =
+  Osc2=  1  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0
+  Nqu2= 26  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0
+   
+   
+   
+        5.0000       3.55074741       0.00000000       3.55074741    8327.943  0.000000   0.275383E-05
+ state 1 = GROUND
+ state 2 =
+  Osc2=  1  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0
+  Nqu2= 27  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0
+   
+   
+   
+        6.0000       3.58898938       0.00000000       3.58898938    8636.385  0.000000   0.820721E-05
+ state 1 = GROUND
+ state 2 =
+  Osc2=  1  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0
+  Nqu2= 28  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0
+   
+   
+   
+        7.0000       3.62723135       0.00000000       3.62723135    8944.828  0.000000   0.235230E-04
+ state 1 = GROUND
+ state 2 =
+  Osc2=  1  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0  Osc2=  0
+  Nqu2= 29  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0  Nqu2=  0
+   
+   
+   
+ ------------------------------------------------- 
+    
+    
+ C2 Class
+
+          INDEX        EN2(eV)         EN1(eV)          DE(eV)      En-0-0(cm-1)   FC      SPECTRUM
+ ------------------------------------------------- 
+    
+    
+ C3 class
+
+          INDEX        EN2(eV)         EN1(eV)          DE(eV)      En-0-0(cm-1)   FC      SPECTRUM
+ ------------------------------------------------- 
+ ************************************************ 
