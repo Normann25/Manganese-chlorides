@@ -5,7 +5,33 @@ import numpy as np
 import seaborn as sns
 from scipy.interpolate import PchipInterpolator as pchip
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
+import os, sys
 #%%
+def read_data(path):
+    files = os.listdir(path)
+    data_dict = {}
+
+    for file in files:
+        if '.CSV' in file:
+            name = file.split('.')[0]
+            with open(os.path.join(path, file)) as f:
+                df = pd.read_csv(f, sep = ';', decimal = ',')
+                df = df.dropna()
+
+            data_dict[name] = df
+
+        if '.csv' in file:
+            name = file.split('.')[0]
+            with open(os.path.join(path, file)) as f:
+                df = pd.read_csv(f)
+                df = df.dropna()
+
+            data_dict[name] = df
+        
+        else:
+            pass
+    return data_dict
+
 def cal_spec_extention(df):
     x_values = np.linspace(0, 700, 10000)
     new_df = pd.DataFrame(index=x_values)
@@ -35,6 +61,21 @@ def scaled_spectra(df, percentage_list):
     
     new_df['scaled spectrum'] = new_df[new_df.keys()[1:]].sum(axis='columns')
     return new_df
+
+def scaled_spec_water(df, percentage_low, percentage_high, functionals, aq_list):
+    dict_low = {}
+    dict_high = {}
+
+    for func in functionals:
+        for aq in aq_list:
+            key = ' '.join([func, aq])
+            mask = [key in i for i in df.keys()]
+            uvvis_unscaled = df.loc[:, mask]
+            if 'cam' in key:
+                dict_low[key] = scaled_spectra(uvvis_unscaled, percentage_low)
+                dict_high[key] = scaled_spectra(uvvis_unscaled, percentage_high)
+    
+    return dict_low, dict_high
 
 def experimental_plot(ax, df, y_val, label, ncols):
     ax = ax
@@ -93,6 +134,29 @@ def scaled_plot_species(ax, df, y_vals, labels_list, scilimit, ncols):
     ax.yaxis.offsetText.set_fontsize(9)
     ax.legend(frameon = False, ncol=ncols, fontsize = 8)
 
+def make_subplot(axes, data, xdataname,  ydataname, labels_aq, scilimit, ncols):
+    ax = axes
+    if '1aq' in xdataname:
+        sns.lineplot(x = data[xdataname], y = data[ydataname], ax = ax, label = labels_aq[0], color = 'tab:blue')
+    if '2aq' in xdataname:
+        sns.lineplot(x = data[xdataname], y = data[ydataname], ax = ax, label = labels_aq[1], color = 'tab:orange')
+    if '3aq' in xdataname:
+        sns.lineplot(x = data[xdataname], y = data[ydataname], ax = ax, label = labels_aq[2], color = 'tab:green')
+    if '4aq' in xdataname:
+        sns.lineplot(x = data[xdataname], y = data[ydataname], ax = ax, label = labels_aq[3], color = 'tab:red')
+    if '5aq' in xdataname:
+        sns.lineplot(x = data[xdataname], y = data[ydataname], ax = ax, label = labels_aq[4], color = 'tab:purple')
+    if '6aq' in xdataname:
+        sns.lineplot(x = data[xdataname], y = data[ydataname], ax = ax, label = labels_aq[5], color = 'tab:brown')
+    ax.set_ylabel(None)
+    ax.set_xlabel(None)
+    ax.xaxis.set_minor_locator(AutoMinorLocator())
+    ax.yaxis.set_minor_locator(AutoMinorLocator())
+    ax.tick_params(axis = 'both', which = 'major', direction = 'out', bottom = True, left = True, labelsize = 8)
+    ax.tick_params(axis = 'both', which = 'minor', direction = 'out', width = 1, length = 2, bottom = True, left = True)
+    ax.ticklabel_format(axis = 'y', style = 'sci', scilimits = scilimit)
+    ax.yaxis.offsetText.set_fontsize(9)
+    ax.legend(frameon = False, ncol=ncols, fontsize = 8)
 #%%
 # df = pd.read_csv('./water_sim/uvvis_v2.CSV', sep = ';', decimal = ',')
 #%%
