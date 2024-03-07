@@ -8,6 +8,8 @@ from iminuit import Minuit
 from scipy import stats
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 import os, sys
+sys.path.append('..')
+from ExternalFunctions import Chi2Regression, BinnedLH, UnbinnedLH, nice_string_output, add_text_to_ax
 #%%
 def read_data(path):
     files = os.listdir(path)
@@ -97,3 +99,19 @@ def fit_exp(data_dict, a_guess, b_guess):
         print(f"{key}  Fit: a={a_fit:6.6f}+-{sigma_a_fit:5.8f}  b={b_fit:5.3f}+-{sigma_b_fit:5.3f}  p={Prob_fit:6.6f}")
     
     return array_a, array_b, array_ea, array_eb, array_Chi2, array_ndf, array_Prob
+
+def plot_fit(ax, df, a, b, ea, eb, chi2, ndf, prob):
+    x1, y1 = df['Seconds'], df['CH4 [ppm]']
+    y_fit = b * np.exp(a * x1)
+    ax.plot(x1, y1, label = 'Measured CH4 conc')
+    ax.plot(x1, y_fit, label = 'Fitted CH4 conc')
+    ax.legend(frameon = False, fontsize = 9)
+    ax.set(xlabel = 'Time / s', ylabel = 'CH4 concentration / ppm')
+    d = {'a':   [a, ea],
+         'b':   [b, eb],
+        'Chi2':     chi2,
+        'Ndf':      ndf,
+        'Prob':     prob,
+        }
+    text = nice_string_output(d, extra_spacing=2, decimals=7)
+    add_text_to_ax(0.02, 0.25, text, ax, fontsize=9)
