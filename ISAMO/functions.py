@@ -4,6 +4,8 @@ import matplotlib as mpl
 import pandas as pd
 import numpy as np
 import seaborn as sns
+from iminuit import Minuit
+from scipy import stats
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 import os, sys
 #%%
@@ -41,3 +43,57 @@ def dict_for_treatment(data_dict, idx_array):
         new_dict[key] = df
     return new_dict
 
+def fit_exp(data_dict, a_guess, b_guess):
+    array_a = np.zeros(len(data_dict.keys()))
+    array_b = np.zeros(len(data_dict.keys()))
+    array_ea = np.zeros(len(data_dict.keys()))
+    array_eb = np.zeros(len(data_dict.keys()))
+    array_Chi2 = np.zeros(len(data_dict.keys()))
+    array_ndf = np.zeros(len(data_dict.keys()))
+    array_Prob = np.zeros(len(data_dict.keys()))
+
+    for i, key in enumerate(data_dict.keys()):
+        x = data_dict[key]['Seconds']
+        y = data_dict[key]['CH4 [ppm]']
+        ey = np.zeros(len(y)) + 250
+        Npoints = len(y)
+
+        def fit_func(x, a, b):
+            return b * np.exp(a * x)
+
+        def chi2_owncalc(a, b) :
+            y_fit = fit_func(x, a, b)
+            chi2 = np.sum(((y - y_fit) / ey)**2)
+            return chi2
+        chi2_owncalc.errordef = 1.0    # Chi2 definition (for Minuit)
+
+        # Here we let Minuit know, what to minimise, how, and with what starting parameters:   
+        minuit = Minuit(chi2_owncalc, a = a_guess[i], b = b_guess[i])
+
+        # Perform the actual fit:
+        minuit.migrad();
+
+        # Extract the fitting parameters and their errors:
+        a_fit = minuit.values['a']
+        b_fit = minuit.values['b']
+        sigma_a_fit = minuit.errors['a']
+        sigma_b_fit = minuit.errors['b']
+
+        Nvar = 2                     # Number of variables 
+        Ndof_fit = Npoints - Nvar    # Number of degrees of freedom = Number of data points - Number of variables
+
+        # Get the minimal value obtained for the quantity to be minimised (here the Chi2)
+        Chi2_fit = minuit.fval                          # The chi2 value
+        Prob_fit = stats.chi2.sf(Chi2_fit, Ndof_fit)    # The chi2 probability given N degrees of freedom 
+
+        array_a[i] = a_fit
+        array_b[i] = b_fit
+        array_ea[i] = sigma_a_fit
+        array_eb[i] = sigma_b_fit
+        array_Chi2[i] = Chi2_fit
+        array_ndf[i] = Ndof_fit
+        array_Prob[i] = Prob_fit
+
+        print(f"{key}  Fit: a={a_fit:6.6f}+-{sigma_a_fit:5.8f}  b={b_fit:5.3f}+-{sigma_b_fit:5.3f}  p={Prob_fit:6.6f}")
+    
+    return array_a, array_b, array_ea, array_eb, array_Chi2, array_ndf, array_Prob
