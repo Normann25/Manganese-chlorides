@@ -42,6 +42,7 @@ def dict_for_treatment(data_dict, idx_array):
         df = data_dict[key][idx_array[i][0]:idx_array[i][1]]
         df.reset_index(drop=True, inplace=True)
         df['Seconds'] = df['Seconds'] - df['Seconds'][0]
+        df['Minutes'] = df['Seconds'] / 60
         new_dict[key] = df
     return new_dict
 
@@ -55,9 +56,12 @@ def fit_exp(data_dict, a_guess, b_guess):
     array_Prob = np.zeros(len(data_dict.keys()))
 
     for i, key in enumerate(data_dict.keys()):
-        x = data_dict[key]['Seconds']
+        x = data_dict[key]['Minutes']
         y = data_dict[key]['CH4 [ppm]']
-        ey = np.zeros(len(y)) + 250
+        if max(y) > 100:
+            ey = np.zeros(len(y)) + 250
+        if max(y) < 100:
+            ey = np.zeros(len(y)) + 0.8
         Npoints = len(y)
 
         def fit_func(x, a, b):
@@ -101,12 +105,12 @@ def fit_exp(data_dict, a_guess, b_guess):
     return array_a, array_b, array_ea, array_eb, array_Chi2, array_ndf, array_Prob
 
 def plot_fit(ax, df, a, b, ea, eb, chi2, ndf, prob):
-    x1, y1 = df['Seconds'], df['CH4 [ppm]']
+    x1, y1 = df['Minutes'], df['CH4 [ppm]']
     y_fit = b * np.exp(a * x1)
     ax.plot(x1, y1, label = 'Measured CH4 conc')
     ax.plot(x1, y_fit, label = 'Fitted CH4 conc')
     ax.legend(frameon = False, fontsize = 9)
-    ax.set(xlabel = 'Time / s', ylabel = 'CH4 concentration / ppm')
+    ax.set(xlabel = 'Time / min', ylabel = 'CH4 concentration / ppm')
     d = {'a':   [a, ea],
          'b':   [b, eb],
         'Chi2':     chi2,
@@ -114,4 +118,4 @@ def plot_fit(ax, df, a, b, ea, eb, chi2, ndf, prob):
         'Prob':     prob,
         }
     text = nice_string_output(d, extra_spacing=2, decimals=7)
-    add_text_to_ax(0.02, 0.25, text, ax, fontsize=9)
+    add_text_to_ax(0.02, 0.25, text, ax, fontsize=8)
