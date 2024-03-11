@@ -111,11 +111,11 @@ def plot_fit(ax, df, a, b, ea, eb, chi2, ndf, prob):
     ax.plot(x1, y_fit, label = 'Fitted CH4 conc')
     ax.legend(frameon = False, fontsize = 9)
     ax.set(xlabel = 'Time / min', ylabel = 'CH4 concentration / ppm')
-    d = {'a':   [a, ea],
-         'b':   [b, eb],
-        'Chi2':     chi2,
-        'Ndf':      ndf,
-        'Prob':     prob,
+    d = {r'$\tau$':   [a, ea],
+         'C$_{0}$':   [b, eb],
+        # 'Chi2':     chi2,
+        # 'Ndf':      ndf,
+        # 'Prob':     prob,
         }
     text = nice_string_output(d, extra_spacing=2, decimals=7)
-    add_text_to_ax(0.02, 0.25, text, ax, fontsize=8)
+    add_text_to_ax(0.02, 0.2, text, ax, fontsize=8)
