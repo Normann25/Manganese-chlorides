@@ -117,5 +117,5 @@ def plot_fit(ax, df, a, b, ea, eb, chi2, ndf, prob):
         # 'Ndf':      ndf,
         # 'Prob':     prob,
         }
-    text = nice_string_output(d, extra_spacing=2, decimals=7)
+    text = nice_string_output(d, extra_spacing=2, decimals=5)
     add_text_to_ax(0.02, 0.2, text, ax, fontsize=8)
