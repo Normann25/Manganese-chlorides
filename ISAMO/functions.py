@@ -11,12 +11,27 @@ import os, sys
 sys.path.append('..')
 from ExternalFunctions import Chi2Regression, BinnedLH, UnbinnedLH, nice_string_output, add_text_to_ax
 #%%
-def read_data(path):
+def read_data_leak(path):
     files = os.listdir(path)
     data_dict = {}
 
     for file in files:
         if 'Leak_test' in file:
+            name = file.split('.')[0]
+            with open(os.path.join(path, file)) as f:
+                df = pd.read_csv(f, sep = '\t')
+                # df['Seconds'] = df['Seconds'] - df['Seconds'][0]
+                # df = df.dropna()
+
+            data_dict[name] = df
+    return data_dict
+
+def read_data_exp(path):
+    files = os.listdir(path)
+    data_dict = {}
+
+    for file in files:
+        if 'exp' in file:
             name = file.split('.')[0]
             with open(os.path.join(path, file)) as f:
                 df = pd.read_csv(f, sep = '\t')
