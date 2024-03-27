@@ -41,7 +41,7 @@ def read_data_exp(path):
             data_dict[name] = df
     return data_dict
 
-def overview_plot_leak(ax, df):
+def overview_plot(ax, df):
     ax.plot(df['Seconds'], df['CH4 [ppm]'], lw = 1)
     
     ax.set(xlabel = 'Time / s', ylabel = 'CH4 concentration / ppm')
