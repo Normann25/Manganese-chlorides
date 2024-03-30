@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from iminuit import Minuit
 from scipy import stats
+from sympy import *
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 import os, sys
 sys.path.append('..')
@@ -121,3 +122,68 @@ def plot_full_exp(ax, df, a, b, idx, lamp_interval):
     ax.yaxis.set_minor_locator(AutoMinorLocator())
     ax.tick_params(axis = 'both', which = 'major', direction = 'out', bottom = True, left = True, labelsize = 8)
     ax.tick_params(axis = 'both', which = 'minor', direction = 'out', width = 1, length = 2, bottom = True, left = True)
+
+def plot_before_lamp(ax, df, a, b, exp_label):
+    x = df[exp_label]['seconds']
+    y = b * np.exp(a * x)
+    ax.plot(x, y, label = 'Fitted data', color = 'k')
+    ax.scatter(x, df[exp_label]['HR_12CH4'], label = 'Experimental data', s = 5, zorder = 10)
+
+    ax.legend(frameon = False, fontsize = 8)
+    ax.set_xlabel('Time / s', fontsize = 8)
+    ax.set_ylabel('CH4 concentration / ppm', fontsize = 8)
+
+    ax.xaxis.set_minor_locator(AutoMinorLocator())
+    ax.yaxis.set_minor_locator(AutoMinorLocator())
+    ax.tick_params(axis = 'both', which = 'major', direction = 'out', bottom = True, left = True, labelsize = 8)
+    ax.tick_params(axis = 'both', which = 'minor', direction = 'out', width = 1, length = 2, bottom = True, left = True)
+
+def get_mean_conc(x_mean, a, b, ea, eb):
+    # Define variables:
+    C,A,B,x = symbols("C, A, B, x")
+    dC,dA,dB = symbols("sigma_C, sigma_A, sigma_B")
+
+    # Define relation
+    C = B*exp(x*A)
+
+    # Calculate uncertainty
+    dC = sqrt((C.diff(A) * dA)**2 + (C.diff(B) * dB)**2)
+
+    # Turn expression into numerical functions 
+    # lambdify transform SymPy expressions to lambda functions which can be used to calculate numerical values very fast
+    fC = lambdify((A,B,x),C)
+    fdC = lambdify((A,dA,B,dB,x),dC)
+
+    # Define values and their errors
+    vA, vdA, vB, vdB, vx = a, ea, b, eb, x_mean
+
+    # Numerically evaluate expressions
+    vC = fC(vA, vB, vx)
+    vdC = fdC(vA, vdA, vB, vdB, vx)
+
+    return vC, vdC
+
+def plot_mean_conc(ax, df, a, b, ea, eb):
+    x = df['seconds']
+    y = b[1] * np.exp(a[1] * x)
+    x_mean = df['seconds'].mean()
+    y1, ey1 = get_mean_conc(x_mean, a[0], b[0], ea[0], eb[0])
+    print('before radiation: ', y1, '+-', ey1)
+    y2, ey2 = get_mean_conc(x_mean, a[1], b[1], ea[1], eb[1])
+    print('after radiation: ', y2, '+-', ey2)
+
+    ax.plot(x, y, label = 'Fitted data', color = 'k')
+    ax.scatter(x, df['HR_12CH4'], label = 'Experimental data', s = 10, zorder = 10)
+    ax.scatter(x_mean, y1, label = 'Mean before radiation', s = 10, zorder = 10, color = 'g')
+    ax.scatter(x_mean, y2, label = 'Mean after radiation', s = 10, zorder = 10, color = 'r')
+
+    ax.legend(frameon = False, fontsize = 8)
+    ax.set_xlabel('Time / s', fontsize = 8)
+    ax.set_ylabel('CH4 concentration / ppm', fontsize = 8)
+
+    ax.xaxis.set_minor_locator(AutoMinorLocator())
+    ax.yaxis.set_minor_locator(AutoMinorLocator())
+    ax.tick_params(axis = 'both', which = 'major', direction = 'out', bottom = True, left = True, labelsize = 8)
+    ax.tick_params(axis = 'both', which = 'minor', direction = 'out', width = 1, length = 2, bottom = True, left = True)
+
+    return y1, ey1, y2, ey2
