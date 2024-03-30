@@ -107,7 +107,7 @@ def plot_full_exp(ax, df, a, b, idx, lamp_interval):
 
     ax.plot(x, df['HR_12CH4'][idx[0]:idx[1]], label = 'Experimental data')
     ax.plot(x, y_leak1, label = 'Leak rate 1 (fit)', lw = 1)
-    ax.plot(x, y_lamp, label = 'Light on (fit)', lw = 1)
+    ax.plot(x, y_lamp, label = 'Radiation (fit)', lw = 1)
     ax.plot(x, y_leak2, label = 'Leak rate 2 (fit)', lw = 1)
 
     ax.scatter(df['seconds'][lamp_interval[0]] - df['seconds'][idx[0]], df['HR_12CH4'][lamp_interval[0]], marker = '|', color = 'k', s = 300, zorder = 10)
