@@ -99,23 +99,25 @@ def fit_exp(data_dict, a_guess, b_guess):
     return array_a, array_b, array_ea, array_eb, array_Chi2, array_ndf, array_Prob
 
 def plot_full_exp(ax, df, a, b, idx, lamp_interval):
-    x = df['seconds'][idx[0]:idx[1]]
+    x = df['seconds'][idx[0]:idx[1]] - df['seconds'][idx[0]]
     y_leak1 = b[0] * np.exp(a[0] * x)
     y_lamp = b[1] * np.exp(a[1] * x)
     y_leak2 = b[2] * np.exp(a[2] * x)
 
     ax.plot(x, df['HR_12CH4'][idx[0]:idx[1]], label = 'Experimental data')
-    ax.plot(x, y_leak1, label = 'Fit leak rate 1', lw = 1)
-    ax.plot(x, y_lamp, label = 'Fit during experiment', lw = 1)
-    ax.plot(x, y_leak2, label = 'Fit leak rate 2', lw = 1)
+    ax.plot(x, y_leak1, label = 'Leak rate 1 (fit)', lw = 1)
+    ax.plot(x, y_lamp, label = 'Light on (fit)', lw = 1)
+    ax.plot(x, y_leak2, label = 'Leak rate 2 (fit)', lw = 1)
 
-    ax.scatter(df['seconds'][lamp_interval[0]], df['HR_12CH4'][lamp_interval[0]], marker = '|', color = 'k', s = 500, zorder = 10)
-    ax.scatter(df['seconds'][lamp_interval[1]], df['HR_12CH4'][lamp_interval[1]], marker = '|', color = 'k', s = 500, zorder = 10)
+    ax.scatter(df['seconds'][lamp_interval[0]] - df['seconds'][idx[0]], df['HR_12CH4'][lamp_interval[0]], marker = '|', color = 'k', s = 300, zorder = 10)
+    ax.scatter(df['seconds'][lamp_interval[1]] - df['seconds'][idx[0]], df['HR_12CH4'][lamp_interval[1]], marker = '|', color = 'k', s = 300, zorder = 10)
 
-    ax.legend(frameon = False, fontsize = 10)
-    ax.set(xlabel = 'Time / s', ylabel = 'CH4 concentration / ppm')
+    ax.legend(frameon = False, fontsize = 8)
+    # ax.set(xlabel = 'Time / s', ylabel = 'CH4 concentration / ppm')
+    ax.set_xlabel('Time / s', fontsize = 8)
+    ax.set_ylabel('CH4 concentration / ppm', fontsize = 8)
 
     ax.xaxis.set_minor_locator(AutoMinorLocator())
     ax.yaxis.set_minor_locator(AutoMinorLocator())
-    ax.tick_params(axis = 'both', which = 'major', direction = 'out', bottom = True, left = True)
+    ax.tick_params(axis = 'both', which = 'major', direction = 'out', bottom = True, left = True, labelsize = 8)
     ax.tick_params(axis = 'both', which = 'minor', direction = 'out', width = 1, length = 2, bottom = True, left = True)
