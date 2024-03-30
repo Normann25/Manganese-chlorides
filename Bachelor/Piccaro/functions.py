@@ -95,7 +95,7 @@ def fit_exp(data_dict, a_guess, b_guess):
         array_ndf[i] = Ndof_fit
         array_Prob[i] = Prob_fit
 
-        print(f"{key}  Fit: a={a_fit:6.6f}+-{sigma_a_fit:5.8f}  b={b_fit:5.3f}+-{sigma_b_fit:5.3f}  p={Prob_fit:6.6f}")
+        print(f"{key}  Fit: a={a_fit:6.7f}+-{sigma_a_fit:5.8f}  b={b_fit:5.3f}+-{sigma_b_fit:5.3f}  p={Prob_fit:6.6f}")
     
     return array_a, array_b, array_ea, array_eb, array_Chi2, array_ndf, array_Prob
 
