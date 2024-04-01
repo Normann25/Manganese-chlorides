@@ -163,7 +163,7 @@ def get_mean_conc(x_mean, a, b, ea, eb):
 
     return vC, vdC
 
-def plot_mean_conc(ax, df, lbl_loc, a, b, ea, eb):
+def plot_mean_conc(ax, df, bbox2anchor, a, b, ea, eb):
     x = df['seconds']
     y = b[1] * np.exp(a[1] * x)
     x_mean = df['seconds'].mean()
@@ -172,12 +172,12 @@ def plot_mean_conc(ax, df, lbl_loc, a, b, ea, eb):
     y2, ey2 = get_mean_conc(x_mean, a[1], b[1], ea[1], eb[1])
     print('after radiation: ', y2, '+-', ey2)
 
-    ax.plot(x, y, label = 'Fitted data', color = 'k')
-    ax.scatter(x, df['HR_12CH4'], label = 'Experimental data', s = 10, zorder = 10)
-    ax.scatter(x_mean, y1, label = 'Mean before radiation', s = 10, zorder = 10, color = 'g')
-    ax.scatter(x_mean, y2, label = 'Mean after radiation', s = 10, zorder = 10, color = 'r')
+    ax.plot(x, y, label = 'Fitted', color = 'k')
+    ax.scatter(x, df['HR_12CH4'], label = 'Experimental', s = 10, zorder = 10)
+    ax.scatter(x_mean, y1, label = 'Mean before light', s = 10, zorder = 10, color = 'g')
+    ax.scatter(x_mean, y2, label = 'Mean after light', s = 10, zorder = 10, color = 'r')
 
-    ax.legend(frameon = False, fontsize = 8, loc = lbl_loc)
+    ax.legend(frameon = False, fontsize = 8, bbox_to_anchor = bbox2anchor)
     ax.set_xlabel('Time / s', fontsize = 8)
     ax.set_ylabel('CH4 concentration / ppm', fontsize = 8)
 
