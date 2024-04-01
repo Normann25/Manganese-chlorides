@@ -79,7 +79,7 @@ def scaled_spec_water(df, percentage_low, percentage_high, functionals, aq_list)
 
 def experimental_plot(ax, df, y_val, label, ncols):
     ax = ax
-    ax.plot(df.index, df[y_val], label = label)
+    ax.plot(df['wavelength'], df[y_val], label = label)
     ax.set_ylabel(None)
     ax.set_xlabel(None)
     ax.xaxis.set_minor_locator(AutoMinorLocator())
@@ -87,8 +87,10 @@ def experimental_plot(ax, df, y_val, label, ncols):
     ax.tick_params(axis = 'both', which = 'major', direction = 'out', bottom = True, left = True, labelsize = 8)
     ax.tick_params(axis = 'both', which = 'minor', direction = 'out', width = 1, length = 2, bottom = True, left = True)
     # ax.ticklabel_format(axis = 'y', style = 'sci', scilimits = scilimit)
-    ax.yaxis.offsetText.set_fontsize(9)
+    ax.yaxis.offsetText.set_fontsize(8)
     ax.legend(frameon = False, ncol=ncols, fontsize = 8)
+    ax.set_xlabel('Wavelength / nm', fontsize = 8)
+    ax.set_ylabel('Molar absorption \n coefficient / M$^{-1}$cm$^{-1}$', fontsize = 8)
 
 
 def scaled_plot(ax, df_list, labels_list, scilimit, ncols):
@@ -131,8 +133,10 @@ def scaled_plot_species(ax, df, y_vals, labels_list, scilimit, ncols):
     ax.tick_params(axis = 'both', which = 'major', direction = 'out', bottom = True, left = True, labelsize = 8)
     ax.tick_params(axis = 'both', which = 'minor', direction = 'out', width = 1, length = 2, bottom = True, left = True)
     ax.ticklabel_format(axis = 'y', style = 'sci', scilimits = scilimit)
-    ax.yaxis.offsetText.set_fontsize(9)
+    ax.yaxis.offsetText.set_fontsize(8)
     ax.legend(frameon = False, ncol=ncols, fontsize = 8)
+    ax.set_xlabel('Wavelength / nm', fontsize = 8)
+    ax.set_ylabel('Molar absorption \n coefficient / M$^{-1}$cm$^{-1}$', fontsize = 8)
 
 def make_subplot(axes, data, xdataname,  ydataname, labels_aq, scilimit, ncols):
     ax = axes
