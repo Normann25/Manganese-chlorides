@@ -105,15 +105,14 @@ def plot_full_exp(ax, df, a, b, idx, lamp_interval):
     y_lamp = b[1] * np.exp(a[1] * x)
     y_leak2 = b[2] * np.exp(a[2] * x)
 
-    ax.plot(x, df['HR_12CH4'][idx[0]:idx[1]], label = 'Experimental data')
-    ax.plot(x, y_leak1, label = 'Leak rate 1 (fit)', lw = 1)
-    ax.plot(x, y_lamp, label = 'Radiation (fit)', lw = 1)
-    ax.plot(x, y_leak2, label = 'Leak rate 2 (fit)', lw = 1)
+    ax.plot(x, df['HR_12CH4'][idx[0]:idx[1]])
+    ax.plot(x, y_leak1, lw = 1)
+    ax.plot(x, y_lamp, lw = 1)
+    ax.plot(x, y_leak2, lw = 1)
 
     ax.scatter(df['seconds'][lamp_interval[0]] - df['seconds'][idx[0]], df['HR_12CH4'][lamp_interval[0]], marker = '|', color = 'k', s = 300, zorder = 10)
     ax.scatter(df['seconds'][lamp_interval[1]] - df['seconds'][idx[0]], df['HR_12CH4'][lamp_interval[1]], marker = '|', color = 'k', s = 300, zorder = 10)
 
-    ax.legend(frameon = False, fontsize = 8)
     # ax.set(xlabel = 'Time / s', ylabel = 'CH4 concentration / ppm')
     ax.set_xlabel('Time / s', fontsize = 8)
     ax.set_ylabel('CH4 concentration / ppm', fontsize = 8)
@@ -172,7 +171,7 @@ def plot_mean_conc(ax, df, a, b, ea, eb):
     y2, ey2 = get_mean_conc(x_mean, a[1], b[1], ea[1], eb[1])
     print('after radiation: ', y2, '+-', ey2)
 
-    ax.plot(x, y, label = 'Fitted', color = 'k')
+    ax.plot(x, y, color = 'k')
     ax.scatter(x, df['HR_12CH4'], s = 10, zorder = 10)
     ax.scatter(x_mean, y1, s = 10, zorder = 10, color = 'g')
     ax.scatter(x_mean, y2, s = 10, zorder = 10, color = 'r')
