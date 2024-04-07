@@ -41,6 +41,28 @@ def read_data_exp(path):
             data_dict[name] = df
     return data_dict
 
+def read_data_picarro(path):
+    files = os.listdir(path)
+    files_list = []
+
+    for file in files:
+        if '.dat' in file:
+            with open(os.path.join(path, file)) as f:
+                df = pd.read_table(f, sep = '\s+')
+                df['seconds'] = pd.to_timedelta(df['TIME']).astype('timedelta64[s]')
+
+                for key in df.keys()[2:]:
+                    df[key] = pd.to_numeric(df[key].replace(',', '.'), errors='coerce')
+
+                files_list.append(df)
+
+    full_df = pd.concat(files_list)
+    new_df = full_df[::4]
+    new_df.reset_index(drop=True, inplace=True)
+    new_df['seconds'] = new_df['seconds'] - new_df['seconds'][0]
+    
+    return new_df
+
 def overview_plot(ax, df):
     ax.plot(df['Seconds'], df['CH4 [ppm]'], lw = 1)
     
@@ -72,11 +94,17 @@ def fit_exp(data_dict, a_guess, b_guess):
 
     for i, key in enumerate(data_dict.keys()):
         x = data_dict[key]['Minutes']
-        y = data_dict[key]['CH4 [ppm]']
-        if max(y) > 100:
-            ey = np.zeros(len(y)) + 250
-        if max(y) < 100:
-            ey = np.zeros(len(y)) + 0.8
+        if 'Picarro' in key:
+            y = data_dict[key]['HR_12CH4']
+            ey = np.zeros(len(y)) + 50/1000
+            for j, conc in enumerate(y):
+                ey[j] += 0.05 * conc
+        else:
+            y = data_dict[key]['CH4 [ppm]']
+            if max(y) > 100:
+                ey = np.zeros(len(y)) + 250
+            if max(y) < 100:
+                ey = np.zeros(len(y)) + 0.8
         Npoints = len(y)
 
         def fit_func(x, a, b):
