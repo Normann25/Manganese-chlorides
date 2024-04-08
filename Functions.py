@@ -42,32 +42,37 @@ def read_data_exp(path):
             data_dict[name] = df
     return data_dict
 
-def read_data_picarro(path):
-    files = os.listdir(path)
-    files_list = []
+def read_data_picarro(parent_path, dates):
+    data_dict = {}
 
-    for file in files:
-        if '.dat' in file:
-            with open(os.path.join(path, file)) as f:
-                df = pd.read_table(f, sep = '\s+')
-                df['Seconds'] = pd.to_timedelta(df['TIME']).astype('timedelta64[s]')
+    for date in dates:
+        path = os.path.join(parent_path, date)
+        files = os.listdir(path)
+        files_list = []
 
-                for key in df.keys()[2:]:
-                    df[key] = pd.to_numeric(df[key].replace(',', '.'), errors='coerce')
+        for file in files:
+            if '.dat' in file:
+                with open(os.path.join(path, file)) as f:
+                    df = pd.read_table(f, sep = '\s+')
+                    df['Seconds'] = pd.to_timedelta(df['TIME']).astype('timedelta64[s]')
 
-                files_list.append(df)
+                    for key in df.keys()[2:]:
+                        df[key] = pd.to_numeric(df[key].replace(',', '.'), errors='coerce')
 
-    full_df = pd.concat(files_list)
-    new_df = full_df[::4]
-    new_df.reset_index(drop=True, inplace=True)
-    new_df['Seconds'] = new_df['Seconds'] - new_df['Seconds'][0]
-    
-    return new_df
+                    files_list.append(df)
 
-def dict_for_treatment(df, idx_array, keys):
+        full_df = pd.concat(files_list)
+        new_df = full_df[::4]
+        new_df.reset_index(drop=True, inplace=True)
+        new_df['Seconds'] = new_df['Seconds'] - new_df['Seconds'][0]
+        data_dict[date] = new_df
+        
+    return data_dict
+
+def dict_for_treatment(data_dict, idx_array, keys):
     new_dict = {}
-    for i, values in enumerate(idx_array):
-        new_df = df[values[0]:values[1]]
+    for i, key in enumerate(data_dict.keys()):
+        new_df = data_dict[key][idx_array[i][0]:idx_array[i][1]]
         new_df.reset_index(drop=True, inplace=True)
         new_df['Seconds'] = new_df['Seconds'] - new_df['Seconds'][0]
         new_df['Minutes'] = new_df['Seconds'] / 60
