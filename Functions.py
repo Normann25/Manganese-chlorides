@@ -49,7 +49,6 @@ def read_data_picarro(parent_path, dates):
         path = os.path.join(parent_path, date)
         files = os.listdir(path)
         files_list = []
-        name = date.split('/')[0]
 
         for file in files:
             if '.dat' in file:
@@ -66,7 +65,7 @@ def read_data_picarro(parent_path, dates):
         new_df = full_df[::4]
         new_df.reset_index(drop=True, inplace=True)
         new_df['Seconds'] = new_df['Seconds'] - new_df['Seconds'][0]
-        data_dict[name] = new_df
+        data_dict[date] = new_df
         
     return data_dict
 
