@@ -70,14 +70,14 @@ def read_data_picarro(parent_path, dates):
         
     return data_dict
 
-def dict_for_treatment(data_dict, idx_array, keys):
+def dict_for_treatment(data_dict, idx_array, new_keys):
     new_dict = {}
     for i, key in enumerate(data_dict.keys()):
-        new_df = data_dict[key][idx_array[i][0]:idx_array[i][1]]
-        new_df.reset_index(drop=True, inplace=True)
-        new_df['Seconds'] = new_df['Seconds'] - new_df['Seconds'][0]
-        new_df['Minutes'] = new_df['Seconds'] / 60
-        new_dict[keys[i]] = new_df
+        for j, idx in enumerate(idx_array[i][::2]):
+            new_df = data_dict[key].iloc[idx:idx_array[i][j*2+1], :]
+            new_df.reset_index(drop=True, inplace=True)
+            new_df['Minutes'] = new_df['Seconds'] / 60
+            new_dict[new_keys[i][j]] = new_df
     return new_dict
 
 def fit_exp(data_dict, a_guess, b_guess):
@@ -90,18 +90,19 @@ def fit_exp(data_dict, a_guess, b_guess):
     array_Prob = np.zeros(len(data_dict.keys()))
 
     for i, key in enumerate(data_dict.keys()):
-        x = data_dict[key]['Seconds']
-        if 'Picarro' in key:
-            y = data_dict[key]['HR_12CH4']
-            ey = np.zeros(len(y)) + 50/1000
-            for j, conc in enumerate(y):
-                ey[j] += 0.05 * conc
-        else:
+        if 'Leak' in key:
+            x = data_dict[key]['Minutes']
             y = data_dict[key]['CH4 [ppm]']
             if max(y) > 100:
                 ey = np.zeros(len(y)) + 250
             if max(y) < 100:
                 ey = np.zeros(len(y)) + 0.8
+        else:
+            x = data_dict[key]['Seconds']
+            y = data_dict[key]['HR_12CH4']
+            ey = np.zeros(len(y)) + 50/1000
+            for j, conc in enumerate(y):
+                ey[j] += 0.05 * conc
         Npoints = len(y)
 
         def fit_func(x, a, b):
