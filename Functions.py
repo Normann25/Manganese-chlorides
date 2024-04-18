@@ -260,9 +260,9 @@ def plot_mean_conc(ax, df, a, b, ea, eb):
     y = b[1] * np.exp(a[1] * x)
     x_mean = df['Seconds'].mean()
     y1, ey1 = get_mean_conc(x_mean, a[0], b[0], ea[0], eb[0])
-    print('before radiation: ', y1, '+-', ey1)
+    print('Before radiation: ', y1, '+-', ey1)
     y2, ey2 = get_mean_conc(x_mean, a[1], b[1], ea[1], eb[1])
-    print('after radiation: ', y2, '+-', ey2)
+    print('After radiation: ', y2, '+-', ey2)
 
     ax.plot(x, y, color = 'k')
     ax.scatter(x, df['HR_12CH4'], s = 10, zorder = 10)
