@@ -3,7 +3,6 @@ plt.rcParams['font.family'] = 'Arial'
 import matplotlib as mpl
 import pandas as pd
 import numpy as np
-import seaborn as sns
 from iminuit import Minuit
 from scipy import stats
 from sympy import *
@@ -68,6 +67,29 @@ def read_data_picarro(parent_path, dates):
         data_dict[date] = new_df
         
     return data_dict
+
+def get_treatment_dict(data_dict, time_stamps, new_keys):
+    pd.options.mode.chained_assignment = None 
+    
+    idx_array = np.zeros((len(data_dict.keys()), 6))
+    for i, dict_key in enumerate(data_dict.keys()):
+        for j, ts in enumerate(time_stamps[i]):
+            for k, time in enumerate(data_dict[dict_key]['TIME']):
+                if ts in time:
+                    idx_array[i][j] += k
+    print(idx_array)
+
+    new_dict = {}
+    for i, key in enumerate(data_dict.keys()):
+        for j, idx in enumerate(idx_array[i][::2]):
+            new_df = data_dict[key].iloc[int(idx):int(idx_array[i][j*2+1]), :]
+            new_df.reset_index(drop=True, inplace=True)
+            new_df['Minutes'] = new_df['Seconds'] / 60
+            new_dict[new_keys[i][j]] = new_df
+
+        for new_key in new_keys[i]:
+            new_dict[new_key]['Seconds'] = new_dict[new_key]['Seconds'] - data_dict[key]['Seconds'][idx_array[i][0]]
+    return new_dict
 
 def dict_for_treatment(data_dict, idx_array, new_keys):
     new_dict = {}
@@ -140,7 +162,7 @@ def fit_exp(data_dict, a_guess, b_guess):
         array_ndf[i] = Ndof_fit
         array_Prob[i] = Prob_fit
 
-        print(f"{key}  Fit: a={a_fit:6.6f}+-{sigma_a_fit:5.8f}  b={b_fit:5.3f}+-{sigma_b_fit:5.3f}  p={Prob_fit:6.6f}")
+        print(f"{key}  Fit: tau={a_fit:6.6f}+-{sigma_a_fit:5.8f}  c_0={b_fit:5.3f}+-{sigma_b_fit:5.3f}  p={Prob_fit:6.6f}")
     
     return array_a, array_b, array_ea, array_eb, array_Chi2, array_ndf, array_Prob
 
@@ -176,14 +198,14 @@ def plot_full_exp(ax, df, a, b, idx, lamp_interval):
     y_lamp = b[1] * np.exp(a[1] * x)
     y_leak2 = b[2] * np.exp(a[2] * x)
 
-    ax.plot(x, df['HR_12CH4'][idx[0]:idx[1]])
-    ax.plot(x, y_leak1, lw = 1)
-    ax.plot(x, y_lamp, lw = 1)
-    ax.plot(x, y_leak2, lw = 1)
+    ax.plot(x, df['HR_12CH4'][idx[0]:idx[1]], lw = 0.9, color = 'k')
+    ax.plot(x, y_leak1, lw = 1, color = 'tab:blue', ls = '--')
+    ax.plot(x, y_lamp, lw = 1, color = 'red', ls = '--')
+    ax.plot(x, y_leak2, lw = 1, color = 'forestgreen', ls = '--')
 
-    ax.scatter(df['Seconds'][lamp_interval[0]] - df['Seconds'][idx[0]], df['HR_12CH4'][lamp_interval[0]], marker = '|', color = 'k', s = 300, zorder = 10)
-    ax.scatter(df['Seconds'][lamp_interval[1]] - df['Seconds'][idx[0]], df['HR_12CH4'][lamp_interval[1]], marker = '|', color = 'k', s = 300, zorder = 10)
-
+    ax.axvspan(df['Seconds'][lamp_interval[0]] - df['Seconds'][idx[0]], 
+               df['Seconds'][lamp_interval[1]] - df['Seconds'][idx[0]], color='y', alpha=0.25, lw=0)
+    
     # ax.set(xlabel = 'Time / s', ylabel = 'CH4 concentration / ppm')
     ax.set_xlabel('Time / s', fontsize = 8)
     ax.set_ylabel('CH4 concentration / ppm', fontsize = 8)
