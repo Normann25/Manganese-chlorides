@@ -71,12 +71,14 @@ def read_data_picarro(parent_path, dates):
 def get_treatment_dict(data_dict, time_stamps, new_keys):
     pd.options.mode.chained_assignment = None 
     
-    idx_array = np.zeros((len(data_dict.keys()), 6))
+    idx_array = []
     for i, dict_key in enumerate(data_dict.keys()):
+        idx_ts = np.zeros(len(time_stamps[i]))
         for j, ts in enumerate(time_stamps[i]):
             for k, time in enumerate(data_dict[dict_key]['TIME']):
                 if ts in time:
-                    idx_array[i][j] += k
+                    idx_ts[j] += k
+        idx_array.append(idx_ts)
     print(idx_array)
 
     new_dict = {}
