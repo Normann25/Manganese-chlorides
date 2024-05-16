@@ -79,7 +79,8 @@ def get_treatment_dict(data_dict, time_stamps, new_keys):
                 if ts in time:
                     idx_ts[j] += k
         idx_array.append(idx_ts)
-    print(idx_array)
+    
+        print(idx_ts)
 
     new_dict = {}
     for i, key in enumerate(data_dict.keys()):
