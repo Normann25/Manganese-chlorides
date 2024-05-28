@@ -57,7 +57,7 @@ def read_data_picarro(parent_path, dates):
 
                     for key in df.keys()[2:]:
                         df[key] = pd.to_numeric(df[key].replace(',', '.'), errors='coerce')
-                    df = df.sort_values(by = 'TIME', ascending = True)
+                    # df = df.sort_values(by = 'TIME', ascending = True)
                     files_list.append(df)
 
         full_df = pd.concat(files_list)
