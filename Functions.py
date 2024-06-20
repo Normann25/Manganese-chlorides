@@ -233,38 +233,44 @@ def plot_before_lamp(ax, df, a, b, exp_label):
     ax.tick_params(axis = 'both', which = 'major', direction = 'out', bottom = True, left = True, labelsize = 8)
     ax.tick_params(axis = 'both', which = 'minor', direction = 'out', width = 1, length = 2, bottom = True, left = True)
 
-def get_mean_conc(x_mean, a, b, ea, eb):
-    # Define variables:
-    C,A,B,x = symbols("C, A, B, x")
-    dC,dA,dB = symbols("sigma_C, sigma_A, sigma_B")
+def get_mean_conc(x, a, b):
+    conc = b * np.exp(x * a)
+    mean_conc = conc.mean()
+    std_conc = conc.std()
+    return mean_conc, std_conc
 
-    # Define relation
-    C = B*exp(x*A)
+# def get_mean_conc(x_mean, a, b, ea, eb):
+    # # Define variables:
+    # C,A,B,x = symbols("C, A, B, x")
+    # dC,dA,dB = symbols("sigma_C, sigma_A, sigma_B")
 
-    # Calculate uncertainty
-    dC = sqrt((C.diff(A) * dA)**2 + (C.diff(B) * dB)**2)
+    # # Define relation
+    # C = B*exp(x*A)
 
-    # Turn expression into numerical functions 
-    # lambdify transform SymPy expressions to lambda functions which can be used to calculate numerical values very fast
-    fC = lambdify((A,B,x),C)
-    fdC = lambdify((A,dA,B,dB,x),dC)
+    # # Calculate uncertainty
+    # dC = sqrt((C.diff(A) * dA)**2 + (C.diff(B) * dB)**2)
 
-    # Define values and their errors
-    vA, vdA, vB, vdB, vx = a, ea, b, eb, x_mean
+    # # Turn expression into numerical functions 
+    # # lambdify transform SymPy expressions to lambda functions which can be used to calculate numerical values very fast
+    # fC = lambdify((A,B,x),C)
+    # fdC = lambdify((A,dA,B,dB,x),dC)
 
-    # Numerically evaluate expressions
-    vC = fC(vA, vB, vx)
-    vdC = fdC(vA, vdA, vB, vdB, vx)
+    # # Define values and their errors
+    # vA, vdA, vB, vdB, vx = a, ea, b, eb, x_mean
 
-    return vC, vdC
+    # # Numerically evaluate expressions
+    # vC = fC(vA, vB, vx)
+    # vdC = fdC(vA, vdA, vB, vdB, vx)
 
-def plot_mean_conc(ax, df, a, b, ea, eb):
+    # return vC, vdC
+
+def plot_mean_conc(ax, df, a, b):
     x = df['Seconds']
     y = b[1] * np.exp(a[1] * x)
-    x_mean = df['Seconds'].mean()
-    y1, ey1 = get_mean_conc(x_mean, a[0], b[0], ea[0], eb[0])
+    x_mean = x.mean()
+    y1, ey1 = get_mean_conc(x, a[0], b[0])
     print('Before radiation: ', y1, '+-', ey1)
-    y2, ey2 = get_mean_conc(x_mean, a[1], b[1], ea[1], eb[1])
+    y2, ey2 = get_mean_conc(x, a[1], b[1])
     print('After radiation: ', y2, '+-', ey2)
 
     ax.plot(x, y, color = 'k')
