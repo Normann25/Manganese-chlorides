@@ -234,10 +234,22 @@ def plot_before_lamp(ax, df, a, b, exp_label):
     ax.tick_params(axis = 'both', which = 'minor', direction = 'out', width = 1, length = 2, bottom = True, left = True)
 
 def get_mean_conc(x, a, b):
-    conc = b * np.exp(x * a)
-    mean_conc = conc.mean()
-    std_conc = conc.std()
-    return mean_conc, std_conc
+    conc_leak1 = b[0] * np.exp(x * a[0])
+    mean_conc_leak1 = conc_leak1.mean()
+    std_conc_leak1 = conc_leak1.std()
+    print('Before radiation: ', mean_conc_leak1, '+-', std_conc_leak1)
+
+    conc_leak2 = b[1] * np.exp(x * a[1])
+    mean_conc_leak2 = conc_leak2.mean()
+    std_conc_leak2 = conc_leak2.std()
+    print('After radiation: ', mean_conc_leak2, '+-', std_conc_leak2)
+
+    difference = conc_leak1 - conc_leak2
+    mean_diff = difference.mean()
+    std_diff = difference.std()
+    print('Difference: ', mean_diff, '+-', std_diff)
+
+    return mean_conc_leak1, std_conc_leak1, mean_conc_leak2, std_conc_leak2
 
 # def get_mean_conc(x_mean, a, b, ea, eb):
     # # Define variables:
@@ -268,10 +280,7 @@ def plot_mean_conc(ax, df, a, b):
     x = df['Seconds']
     y = b[1] * np.exp(a[1] * x)
     x_mean = x.mean()
-    y1, ey1 = get_mean_conc(x, a[0], b[0])
-    print('Before radiation: ', y1, '+-', ey1)
-    y2, ey2 = get_mean_conc(x, a[1], b[1])
-    print('After radiation: ', y2, '+-', ey2)
+    y1, ey1, y2, ey2 = get_mean_conc(x, a, b)
 
     ax.plot(x, y, color = 'k')
     ax.scatter(x, df['HR_12CH4'], s = 10, zorder = 10)
