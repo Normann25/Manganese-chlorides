@@ -201,10 +201,10 @@ def plot_full_exp(ax, df, a, b, idx, lamp_interval):
     y_lamp = b[1] * np.exp(a[1] * x)
     y_leak2 = b[2] * np.exp(a[2] * x)
 
-    ax.plot(x, df['HR_12CH4'][idx[0]:idx[1]], lw = 0.9, color = 'k')
-    ax.plot(x, y_leak1, lw = 1, color = 'tab:blue', ls = '--')
-    ax.plot(x, y_lamp, lw = 1, color = 'red', ls = '--')
-    ax.plot(x, y_leak2, lw = 1, color = 'forestgreen', ls = '--')
+    ax.plot(x, df['HR_12CH4'][idx[0]:idx[1]], lw = 0.9, color = '#999999')
+    ax.plot(x, y_leak1, lw = 1, color = '#377eb8', ls = '--')
+    ax.plot(x, y_lamp, lw = 1, color = '#ff7f00', ls = '--')
+    ax.plot(x, y_leak2, lw = 1, color = '#a65628', ls = '--')
 
     ax.axvspan(df['Seconds'][lamp_interval[0]] - df['Seconds'][idx[0]], 
                df['Seconds'][lamp_interval[1]] - df['Seconds'][idx[0]], color='y', alpha=0.25, lw=0)
